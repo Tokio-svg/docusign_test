@@ -34,7 +34,7 @@ h2 {
   margin: 20px 0;
 }
 
-.upload__button {
+.form__button {
   display: block;
   width: 200px;
   text-align: center;
@@ -43,6 +43,11 @@ h2 {
   padding: 5px 0;
   margin-top: 15px;
   font-size: small;
+}
+
+.form__input {
+  padding: 3px 7px;
+  border: 1px solid gray;
 }
 
 .integration__button {
@@ -69,6 +74,48 @@ h2 {
 
 .user-list__item li span {
   display: inline-block;
-  width: 100px;
-  padding-right: 5px;
+  min-width: 100px;
+  padding-right: 10px;
+  font-weight: bold;
+}
+
+/* 封筒一覧画面 */
+.envelope-list__item {
+  margin: 5px 0;
+  height: 40px;
+  background-color: rgb(222, 255, 244);
+  border-radius: 5px;
+}
+
+.envelope-list__item:hover {
+  background-color: rgb(246, 222, 255);
+}
+
+.envelope-list__item a {
+  height: 100%;
+  width: 100%;
+  line-height: 40px;
+  display: block;
+  padding-left: 30px;
+}
+
+.envelope-list__item a span {
+  padding-right: 10px;
+  font-weight: bold;
+}
+
+/* 封筒情報画面 */
+.envelope-info__container {
+  padding: 20px;
+}
+
+.envelope-info__item {
+  padding: 5px 0;
+}
+
+.envelope-info__item span {
+  display: inline-block;
+  min-width: 225px;
+  padding-right: 10px;
+  font-weight: bold;
 }

@@ -7,15 +7,15 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use App\Models\Docusign;
 use App\Models\File;
+use App\Models\Envelope;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class DocusignController extends Controller
 {
-    /**
-     *
-     * @param  \Illuminate\Http\Request  $request
-     *
-     */
+    // -----------------------------------------------
+    // ホーム画面
+    // -----------------------------------------------
     public function index() {
         $params = [
             'account_id' => null,
@@ -41,6 +41,9 @@ class DocusignController extends Controller
         return view('index', $params);
     }
 
+    // -----------------------------------------------
+    // アクセストークン取得後のリダイレクト先
+    // -----------------------------------------------
     /**
      *
      * @param  \Illuminate\Http\Request  $request
@@ -107,6 +110,9 @@ class DocusignController extends Controller
         ]);
     }
 
+    // -----------------------------------------------
+    // ユーザー一覧
+    // -----------------------------------------------
     /**
      *
      * @param  \Illuminate\Http\Request  $request
@@ -115,12 +121,13 @@ class DocusignController extends Controller
     public function getUsers() {
 
         try {
-            $docusign_info = Docusign::first();
-            $access_token = $docusign_info->access_token;
-            $account_id = $docusign_info->account_id;
+            $docusign_item = Docusign::first();
+            $access_token = $docusign_item->access_token;
+            $account_id = $docusign_item->account_id;
+            $base_url = $docusign_item->base_url;
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $access_token
-            ])->get('https://demo.docusign.net/restapi/v2.1/accounts/' . $account_id . '/users');
+            ])->get($base_url . '/restapi/v2.1/accounts/' . $account_id . '/users');
         } catch(\Throwable $e) {
             Log::error($e);
             throw $e;
@@ -130,6 +137,9 @@ class DocusignController extends Controller
         ]);
     }
 
+    // -----------------------------------------------
+    // ファイルアップロード処理
+    // -----------------------------------------------
     /**
      *
      * @param  \Illuminate\Http\Request  $request
@@ -156,6 +166,144 @@ class DocusignController extends Controller
             throw $e;
         }
         return redirect('/');
+    }
+
+    // -----------------------------------------------
+    // 電子署名依頼処理
+    // -----------------------------------------------
+    public function requestSignPage() {
+
+        return view('request_sign');
+    }
+
+    /**
+     *
+     * @param  \Illuminate\Http\Request  $request
+     *
+     */
+    public function sendRequestSign(Request $request) {
+        try {
+            DB::beginTransaction();
+
+            // パラメータ取得
+            $signer_email = $request->signer_email;
+            $file_item = File::first();
+            $file = Storage::get($file_item->file_path);
+            $file_ext = pathinfo($file_item->file_path, PATHINFO_EXTENSION);
+            $file_base64 = base64_encode($file);
+            $docusign_item = Docusign::first();
+            $access_token = $docusign_item->access_token;
+            $account_id = $docusign_item->account_id;
+            $base_url = $docusign_item->base_url;
+
+
+            // エンベロープ定義を作成
+            $request_data = [
+                'emailSubject' => 'Please sign this document',
+                'documents' => [
+                    [
+                        'documentBase64' => $file_base64,
+                        'name' => 'test file',
+                        'fileExtension' => $file_ext,
+                        'documentId' => '1'
+                    ]
+                ],
+                'recipients' => [
+                    'carbonCopies' => [
+                        [
+                            'email' => 're_zell@yahoo.co.jp',
+                            'name' => 'CC Name',
+                            'recipientId' => '2',
+                            'routingOrder' => '2'
+                        ]
+                    ],
+                    'signers' => [
+                        [
+                            'email' => $signer_email,
+                            'name' => 'Signer Name',
+                            'recipientId' => '1',
+                            'routingOrder' => '1'
+                        ]
+                    ]
+                ],
+                'status' => 'sent'
+            ];
+
+            // 封筒を作成して送信
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer ' . $access_token,
+                'Content-Type' => 'application/json'
+            ])->post($base_url . '/restapi/v2.1/accounts/' . $account_id . '/envelopes', $request_data);
+            Log::debug($response);
+
+            // Envelopeレコードを作成
+            Envelope::create([
+                'envelope_id' => $response['envelopeId'],
+                'uri' => $response['uri'],
+                'status_date_time' => $response['statusDateTime'],
+                'status' => $response['status']
+            ]);
+            DB::commit();
+        } catch(\Throwable $e) {
+            DB::rollBack();
+            Log::error($e);
+            throw $e;
+        }
+
+        return redirect('/');
+    }
+
+    // -----------------------------------------------
+    // 封筒画面
+    // -----------------------------------------------
+    // 封筒一覧
+    public function envelopeList() {
+        $envelopes = Envelope::all();
+
+        return view('envelopes', [
+            'envelopes' => $envelopes
+        ]);
+    }
+
+    // 個別の封筒情報(APIから取得)
+    public function envelope($id) {
+        try {
+            $envelope = Envelope::find($id);
+            $docusign_item = Docusign::first();
+            $access_token = $docusign_item->access_token;
+            $account_id = $docusign_item->account_id;
+            $base_url = $docusign_item->base_url;
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer ' . $access_token
+            ])->get($base_url . '/restapi/v2.1/accounts/' . $account_id . '/envelopes/' . $envelope->envelope_id);
+            // Log::debug($response);
+            if ($response->ok()) {
+                $params = [
+                    'envelopeId' => $response['envelopeId'],
+                    'status' => $response['status'],
+                    'emailSubject' => $response['emailSubject'],
+                    'signingLocation' => $response['signingLocation'],
+                    'enableWetSign' => $response['enableWetSign'],
+                    'allowMarkup' => $response['allowMarkup'],
+                    'allowReassign' => $response['allowReassign'],
+                    'createdDateTime' => $response['createdDateTime'],
+                    'statusChangedDateTime' => $response['statusChangedDateTime'],
+                    'expireDateTime' => $response['expireDateTime'],
+                    'envelopeUri' => $response['envelopeUri'],
+                ];
+            } else {
+                $params = [
+                    'error' => true
+                ];
+            }
+        } catch(\Throwable $e) {
+            Log::error($e);
+            throw $e;
+        }
+
+        return view('envelope', [
+            'params' => $params
+        ]);
     }
 
 }

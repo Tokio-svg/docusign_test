@@ -24,6 +24,7 @@
         <ol>
           <li>ID: {{$account_id}}</li>
           <li>Name: {{$account_name}}</li>
+          <li>Base Url: {{$base_url}}</li>
         </ol>
       </div>
 
@@ -35,7 +36,7 @@
             <div>
               <input type="file" name="file" id="file">
             </div>
-            <button class="upload__button" type="submit">Upload</button>
+            <button class="form__button" type="submit">Upload</button>
           </form>
         @else
           <div>file_path: {{$file_path}}</div>
@@ -44,7 +45,11 @@
 
       <div class="menu__container">
         <h2>API Menu</h2>
-        <a class="link" href="/getUsers">ユーザー一覧</a>
+        <ol>
+          <li><a class="link" href="/getUsers">ユーザー一覧</a></li>
+          <li><a class="link" href="/requestSign">電子署名を依頼</a></li>
+          <li><a class="link" href="/envelopes">封筒リスト</a></li>
+        </ol>
       </div>
     @endif
   </article>

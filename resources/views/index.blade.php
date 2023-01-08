@@ -26,7 +26,11 @@
           <li>Name: {{$account_name}}</li>
         </ol>
       </div>
-      <a class="link" href="/getBrands">getBrands</a>
+
+      <div class="menu__container">
+        <h2>Menu</h2>
+        <a class="link" href="/getUsers">ユーザー一覧</a>
+      </div>
     @endif
   </article>
 </body>

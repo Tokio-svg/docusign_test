@@ -103,7 +103,7 @@ class DocusignController extends Controller
      * @param  \Illuminate\Http\Request  $request
      *
      */
-    public function getBrands() {
+    public function getUsers() {
 
         try {
             $docusign_info = Docusign::first();
@@ -112,11 +112,12 @@ class DocusignController extends Controller
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $access_token
             ])->get('https://demo.docusign.net/restapi/v2.1/accounts/' . $account_id . '/users');
-            Log::debug($response);
         } catch(\Throwable $e) {
             Log::error($e);
             throw $e;
         }
-        return redirect('/');
+        return view('users', [
+            'users' => $response['users']
+        ]);
     }
 }

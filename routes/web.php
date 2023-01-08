@@ -6,4 +6,4 @@ use App\Http\Controllers\DocusignController;
 
 Route::get('/', [DocusignController::class, 'index']);
 Route::get('/docusign', [DocusignController::class, 'docusign']);
-Route::get('/getBrands', [DocusignController::class, 'getBrands']);
+Route::get('/getUsers', [DocusignController::class, 'getUsers']);

@@ -3,10 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-// use App\Models\Docusign;
+use App\Models\Docusign;
 use Illuminate\Support\Facades\DB;
 
 class DocusignController extends Controller
@@ -17,7 +16,20 @@ class DocusignController extends Controller
      *
      */
     public function index() {
-        return view('index');
+        $docusign = Docusign::first();
+        $params = [
+            'account_id' => null,
+            'account_name' => null,
+            'base_url' => null,
+            'access_token' => null
+        ];
+        if ($docusign) {
+            $params['account_id'] = $docusign->account_id;
+            $params['account_name'] = $docusign->account_name;
+            $params['base_url'] = $docusign->base_url;
+            $params['access_token'] = $docusign->access_token;
+        }
+        return view('index', $params);
     }
 
     /**
@@ -52,12 +64,22 @@ class DocusignController extends Controller
             $account_name = $response['accounts'][0]['account_name'];
             $base_url = $response['accounts'][0]['base_uri'];
 
-            Docusign::create([
-                'account_id' => $account_id,
-                'account_name' => $account_name,
-                'base_url' => $base_url,
-                'access_token' => $access_token
-            ]);
+            $docusign_item = Docusign::first();
+            if (!$docusign_item) {
+                Docusign::create([
+                    'account_id' => $account_id,
+                    'account_name' => $account_name,
+                    'base_url' => $base_url,
+                    'access_token' => $access_token
+                ]);
+            } else {
+                $docusign_item->update([
+                    'account_id' => $account_id,
+                    'account_name' => $account_name,
+                    'base_url' => $base_url,
+                    'access_token' => $access_token
+                ]);
+            }
 
             DB::commit();
         } catch(\Throwable $e) {
@@ -87,7 +109,6 @@ class DocusignController extends Controller
             $docusign_info = Docusign::first();
             $access_token = $docusign_info->access_token;
             $account_id = $docusign_info->account_id;
-            // $account_id = 'aadcd4cf-8a04-4706-a5d6-544c2e2503f5';
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $access_token
             ])->get('https://demo.docusign.net/restapi/v2.1/accounts/' . $account_id . '/users');

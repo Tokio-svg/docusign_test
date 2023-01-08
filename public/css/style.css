@@ -1,0 +1,46 @@
+body {
+  background-color: antiquewhite;
+}
+
+article {
+  background-color: white;
+  width: 80%;
+  min-width: 1000px;
+  min-height: calc(100vh - 120px);
+  margin: 60px auto;
+  padding: 40px;
+}
+
+h1 {
+  font-weight: bold;
+  font-size: 24px;
+  padding: 10px 0;
+}
+
+h2 {
+  font-weight: bold;
+  font-size: 18px;
+  padding: 10px 0;
+}
+
+.status__container {
+  margin: 20px 0;
+  padding: 20px;
+  background-color: rgb(222, 255, 244);
+}
+
+.button {
+  display: block;
+  width: 200px;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  background-color: rgb(58, 58, 188);
+  color: white;
+  font-weight: bold;
+}
+
+.link {
+  color: rgb(58, 58, 188);
+  text-decoration: underline;
+}

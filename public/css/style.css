@@ -30,7 +30,22 @@ h2 {
   background-color: rgb(222, 255, 244);
 }
 
-.button {
+.file__container {
+  margin: 20px 0;
+}
+
+.upload__button {
+  display: block;
+  width: 200px;
+  text-align: center;
+  background-color: rgb(58, 58, 188);
+  color: white;
+  padding: 5px 0;
+  margin-top: 15px;
+  font-size: small;
+}
+
+.integration__button {
   display: block;
   width: 200px;
   height: 40px;
@@ -38,7 +53,6 @@ h2 {
   text-align: center;
   background-color: rgb(58, 58, 188);
   color: white;
-  font-weight: bold;
 }
 
 .link {

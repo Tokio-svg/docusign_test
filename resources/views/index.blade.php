@@ -14,7 +14,7 @@
 
     @if(!$account_id)
       <a
-        class="button"
+        class="integration__button"
         href="https://account-d.docusign.com/oauth/auth?response_type=code&scope=signature&client_id=2c52bf7a-0c4e-4372-9fdf-1e2e6b35e314&state=a39fh23hnf23&redirect_uri=http://localhost:8000/docusign">
         連携する
       </a>
@@ -27,8 +27,23 @@
         </ol>
       </div>
 
+      <div class="file__container">
+        <h2>File Info</h2>
+        @if(!$file_path)
+          <form action="/upload" method="post" enctype="multipart/form-data">
+            @csrf
+            <div>
+              <input type="file" name="file" id="file">
+            </div>
+            <button class="upload__button" type="submit">Upload</button>
+          </form>
+        @else
+          <div>file_path: {{$file_path}}</div>
+        @endif
+      </div>
+
       <div class="menu__container">
-        <h2>Menu</h2>
+        <h2>API Menu</h2>
         <a class="link" href="/getUsers">ユーザー一覧</a>
       </div>
     @endif

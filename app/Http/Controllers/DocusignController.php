@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use App\Models\Docusign;
+use App\Models\File;
 use Illuminate\Support\Facades\DB;
 
 class DocusignController extends Controller
@@ -16,19 +17,27 @@ class DocusignController extends Controller
      *
      */
     public function index() {
-        $docusign = Docusign::first();
         $params = [
             'account_id' => null,
             'account_name' => null,
             'base_url' => null,
-            'access_token' => null
+            'access_token' => null,
+            'file_path' => null
         ];
+
+        $docusign = Docusign::first();
         if ($docusign) {
             $params['account_id'] = $docusign->account_id;
             $params['account_name'] = $docusign->account_name;
             $params['base_url'] = $docusign->base_url;
             $params['access_token'] = $docusign->access_token;
         }
+
+        $file = File::first();
+        if ($file) {
+            $params['file_path'] = $file->file_path;
+        }
+
         return view('index', $params);
     }
 
@@ -120,4 +129,33 @@ class DocusignController extends Controller
             'users' => $response['users']
         ]);
     }
+
+    /**
+     *
+     * @param  \Illuminate\Http\Request  $request
+     *
+     */
+    public function upload(Request $request) {
+        try {
+            DB::beginTransaction();
+            $path = $request->file('file')->store('public');
+            $file = File::first();
+            if ($file) {
+                $file->update([
+                    'file_path' => $path
+                ]);
+            } else {
+                File::create([
+                    'file_path' => $path
+                ]);
+            }
+            DB::commit();
+        } catch(\Throwable $e) {
+            DB::rollBack();
+            Log::error($e);
+            throw $e;
+        }
+        return redirect('/');
+    }
+
 }

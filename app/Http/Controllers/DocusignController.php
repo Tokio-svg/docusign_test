@@ -54,11 +54,10 @@ class DocusignController extends Controller
             DB::beginTransaction();
             // 認証コードを取得
             $code = $request->code;
-            // Log::debug($request->code);
+            Log::debug($request->code);
 
             // アクセストークンを取得
-            $base_64_string = base64_encode(config('app.docusign_integration_key') . ':' .
-                config('app.docusign_secret_key'));
+            $base_64_string = base64_encode(config('app.docusign_integration_key') . ':' . config('app.docusign_secret_key'));
             $header_authorization = 'Basic ' . $base_64_string;
             $response = Http::withHeaders([
                 'Authorization' => $header_authorization
@@ -66,14 +65,14 @@ class DocusignController extends Controller
                 'grant_type' => 'authorization_code',
                 'code' => $code,
             ]);
-            // Log::debug($response);
+            Log::debug($response);
             $access_token = $response['access_token'];
 
             // ベースURIを取得
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $access_token
             ])->get('https://account-d.docusign.com/oauth/userinfo');
-            // Log::debug($response);
+            Log::debug($response);
             $account_id = $response['accounts'][0]['account_id'];
             $account_name = $response['accounts'][0]['account_name'];
             $base_url = $response['accounts'][0]['base_uri'];
@@ -98,7 +97,7 @@ class DocusignController extends Controller
             DB::commit();
         } catch(\Throwable $e) {
             DB::rollBack();
-            // Log::error($e);
+            Log::error($e);
             throw $e;
         }
 
@@ -125,7 +124,7 @@ class DocusignController extends Controller
             DB::commit();
         } catch(\Throwable $e) {
             DB::rollBack();
-            // Log::error($e);
+            Log::error($e);
             throw $e;
         }
         return redirect('/');
@@ -150,7 +149,7 @@ class DocusignController extends Controller
                 'Authorization' => 'Bearer ' . $access_token
             ])->get($base_url . '/restapi/v2.1/accounts/' . $account_id . '/users');
         } catch(\Throwable $e) {
-            // Log::error($e);
+            Log::error($e);
             throw $e;
         }
         return view('users', [
@@ -183,7 +182,7 @@ class DocusignController extends Controller
             DB::commit();
         } catch(\Throwable $e) {
             DB::rollBack();
-            // Log::error($e);
+            Log::error($e);
             throw $e;
         }
         return redirect('/');
@@ -255,7 +254,7 @@ class DocusignController extends Controller
                 'Authorization' => 'Bearer ' . $access_token,
                 'Content-Type' => 'application/json'
             ])->post($base_url . '/restapi/v2.1/accounts/' . $account_id . '/envelopes', $request_data);
-            // Log::debug($response);
+            Log::debug($response);
 
             // Envelopeレコードを作成
             Envelope::create([
@@ -267,7 +266,7 @@ class DocusignController extends Controller
             DB::commit();
         } catch(\Throwable $e) {
             DB::rollBack();
-            // Log::error($e);
+            Log::error($e);
             throw $e;
         }
 
@@ -297,7 +296,7 @@ class DocusignController extends Controller
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $access_token
             ])->get($base_url . '/restapi/v2.1/accounts/' . $account_id . '/envelopes/' . $envelope->envelope_id);
-            // Log::debug($response);
+            Log::debug($response);
             if ($response->ok()) {
                 $params = [
                     'envelopeId' => $response['envelopeId'],
@@ -318,7 +317,7 @@ class DocusignController extends Controller
                 ];
             }
         } catch(\Throwable $e) {
-            // Log::error($e);
+            Log::error($e);
             throw $e;
         }
 

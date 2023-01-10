@@ -57,7 +57,9 @@ class DocusignController extends Controller
             Log::debug($request->code);
 
             // アクセストークンを取得
-            $header_authorization = 'Basic ' . base64_encode('2c52bf7a-0c4e-4372-9fdf-1e2e6b35e314:b7c8049d-641a-4380-868e-b987ae591a38');
+            $base_64_string = base64_encode(config('app.docusign_integration_key') . ':' .
+                config('app.docusign_secret_key'));
+            $header_authorization = 'Basic ' . $base_64_string;
             $response = Http::withHeaders([
                 'Authorization' => $header_authorization
             ])->post('https://account-d.docusign.com/oauth/token', [

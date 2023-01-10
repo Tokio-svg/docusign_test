@@ -15,10 +15,11 @@
     @if(!$account_id)
       @php
         $redirect_url = config('app.url');
+        $integration_key = config('app.docusign_integration_key');
       @endphp
       <a
         class="integration__button"
-        href="https://account-d.docusign.com/oauth/auth?response_type=code&scope=signature&client_id=2c52bf7a-0c4e-4372-9fdf-1e2e6b35e314&state=a39fh23hnf23&redirect_uri={{$redirect_url}}/docusign">
+        href="https://account-d.docusign.com/oauth/auth?response_type=code&scope=signature&client_id={{$integration_key}}&state=a39fh23hnf23&redirect_uri={{$redirect_url}}/docusign">
         連携する
       </a>
     @else

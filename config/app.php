@@ -212,4 +212,7 @@ return [
         // 'ExampleClass' => App\Example\ExampleClass::class,
     ])->toArray(),
 
+    // DocuSignで使用する環境変数
+    'docusign_integration_key' => env('DOCUSIGN_INTEGRATION_KEY'),
+    'docusign_secret_key' => env('DOCUSIGN_SECRET_KEY'),
 ];

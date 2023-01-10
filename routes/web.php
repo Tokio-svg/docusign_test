@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DocusignController;
+use App\Http\Controllers\TestController;
 
 
 Route::get('/', [DocusignController::class, 'index']);
@@ -20,3 +21,6 @@ Route::post('/requestSign', [DocusignController::class, 'sendRequestSign']);
 Route::get('/envelopes', [DocusignController::class, 'envelopeList']);
 // 個別の封筒情報
 Route::get('/envelope/{id}', [DocusignController::class, 'envelope']);
+
+// ログ取得
+Route::get('/getLogs', [TestController::class, 'getLogs']);

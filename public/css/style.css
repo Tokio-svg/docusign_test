@@ -65,6 +65,10 @@ h2 {
   text-decoration: underline;
 }
 
+.dowload-log__button--container {
+  margin-top: 30px;
+}
+
 /* 連携完了画面 */
 .integrated__container {
   padding: 20px;

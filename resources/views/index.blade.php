@@ -60,6 +60,10 @@
         </ol>
       </div>
     @endif
+
+    <div class="dowload-log__button--container">
+      <a class="integration__button" href="/getLogs">ログダウンロード</a>
+    </div>
   </article>
 </body>
 </html>

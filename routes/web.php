@@ -7,6 +7,8 @@ use App\Http\Controllers\DocusignController;
 Route::get('/', [DocusignController::class, 'index']);
 // 統合後画面
 Route::get('/docusign', [DocusignController::class, 'docusign']);
+// 連携解除
+Route::post('/release', [DocusignController::class, 'release']);
 // ユーザー一覧
 Route::get('/getUsers', [DocusignController::class, 'getUsers']);
 // ファイルアップロード

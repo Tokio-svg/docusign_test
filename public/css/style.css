@@ -65,6 +65,15 @@ h2 {
   text-decoration: underline;
 }
 
+/* 連携完了画面 */
+.integrated__container {
+  padding: 20px;
+}
+
+.integrated__container p {
+  overflow-wrap: break-word;
+}
+
 /* ユーザー一覧画面 */
 .user-list__item {
   border: 1px solid black;

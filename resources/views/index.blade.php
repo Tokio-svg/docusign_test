@@ -13,9 +13,12 @@
     <h1>DocuSign Test</h1>
 
     @if(!$account_id)
+      @php
+        $redirect_url = config('app.url');
+      @endphp
       <a
         class="integration__button"
-        href="https://account-d.docusign.com/oauth/auth?response_type=code&scope=signature&client_id=2c52bf7a-0c4e-4372-9fdf-1e2e6b35e314&state=a39fh23hnf23&redirect_uri=http://localhost:8000/docusign">
+        href="https://account-d.docusign.com/oauth/auth?response_type=code&scope=signature&client_id=2c52bf7a-0c4e-4372-9fdf-1e2e6b35e314&state=a39fh23hnf23&redirect_uri={{$redirect_url}}/docusign">
         連携する
       </a>
     @else
@@ -26,6 +29,10 @@
           <li>Name: {{$account_name}}</li>
           <li>Base Url: {{$base_url}}</li>
         </ol>
+        <form action="/release" method="post">
+          @csrf
+          <button class="integration__button" type="submit">連携解除</button>
+        </form>
       </div>
 
       <div class="file__container">

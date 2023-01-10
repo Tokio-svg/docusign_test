@@ -111,6 +111,25 @@ class DocusignController extends Controller
     }
 
     // -----------------------------------------------
+    // 連携解除
+    // -----------------------------------------------
+    public function release() {
+        try {
+            DB::beginTransaction();
+            $docusign = Docusign::first();
+            if ($docusign) {
+                $docusign->delete();
+            }
+            DB::commit();
+        } catch(\Throwable $e) {
+            DB::rollBack();
+            Log::error($e);
+            throw $e;
+        }
+        return redirect('/');
+    }
+
+    // -----------------------------------------------
     // ユーザー一覧
     // -----------------------------------------------
     /**
@@ -250,7 +269,7 @@ class DocusignController extends Controller
             throw $e;
         }
 
-        return redirect('/');
+        return redirect('/envelopes');
     }
 
     // -----------------------------------------------

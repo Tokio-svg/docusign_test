@@ -50,8 +50,8 @@ class DocusignController extends Controller
      *
      */
     public function docusign(Request $request) {
-        // try {
-        //     DB::beginTransaction();
+        try {
+            DB::beginTransaction();
             // 認証コードを取得
             $code = $request->code;
             Log::debug($request->code);
@@ -94,12 +94,12 @@ class DocusignController extends Controller
                 ]);
             }
 
-        //     DB::commit();
-        // } catch(\Throwable $e) {
-        //     DB::rollBack();
-        //     Log::error($e);
-        //     throw $e;
-        // }
+            DB::commit();
+        } catch(\Throwable $e) {
+            DB::rollBack();
+            Log::error($e);
+            throw $e;
+        }
 
         return view('docusign', [
             'access_token' => $access_token,

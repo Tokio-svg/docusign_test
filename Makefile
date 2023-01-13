@@ -12,3 +12,5 @@ fresh:
 	php artisan migrate:fresh --seed
 cache:
 	php artisan cache:clear
+token:
+	php artisan refreshToken

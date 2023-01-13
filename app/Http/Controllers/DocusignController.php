@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Log;
 use App\Models\Docusign;
 use App\Models\Envelope;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon; 
 // use DocuSign\eSign\Configuration;
 // use DocuSign\eSign\Api\EnvelopesApi;
 // use DocuSign\eSign\Client\ApiClient;
@@ -23,6 +24,7 @@ class DocusignController extends Controller
             'account_name' => null,
             'base_url' => null,
             'access_token' => null,
+            'expires_at' => null,
             'file_path' => null
         ];
 
@@ -32,6 +34,7 @@ class DocusignController extends Controller
             $params['account_name'] = $docusign->account_name;
             $params['base_url'] = $docusign->base_url;
             $params['access_token'] = $docusign->access_token;
+            $params['expires_at'] = $docusign->expires_at;
         }
 
         return view('index', $params);
@@ -63,6 +66,9 @@ class DocusignController extends Controller
             ]);
             Log::debug($response);
             $access_token = $response['access_token'];
+            $refresh_token = $response['refresh_token'];
+            $expires_in = $response['expires_in'];
+            $expires_at = Carbon::now()->addSeconds($expires_in);
 
             // ベースURIを取得
             $response = Http::withHeaders([
@@ -79,14 +85,18 @@ class DocusignController extends Controller
                     'account_id' => $account_id,
                     'account_name' => $account_name,
                     'base_url' => $base_url,
-                    'access_token' => $access_token
+                    'access_token' => $access_token,
+                    'refresh_token' => $refresh_token,
+                    'expires_at' => $expires_at
                 ]);
             } else {
                 $docusign_item->update([
                     'account_id' => $account_id,
                     'account_name' => $account_name,
                     'base_url' => $base_url,
-                    'access_token' => $access_token
+                    'access_token' => $access_token,
+                    'refresh_token' => $refresh_token,
+                    'expires_at' => $expires_at
                 ]);
             }
 

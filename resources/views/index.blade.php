@@ -29,6 +29,7 @@
           <li>ID: {{$account_id}}</li>
           <li>Name: {{$account_name}}</li>
           <li>Base Url: {{$base_url}}</li>
+          <li>Expires_at: {{$expires_at}}</li>
         </ol>
         <form action="/release" method="post">
           @csrf
@@ -45,10 +46,6 @@
         </ol>
       </div>
     @endif
-
-    <div class="dowload-log__button--container">
-      <a class="integration__button" href="/getLogs">ログダウンロード</a>
-    </div>
   </article>
 </body>
 </html>

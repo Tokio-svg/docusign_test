@@ -17,8 +17,10 @@ return new class extends Migration
             $table->id();
             $table->string('account_id');
             $table->string('account_name');
-            $table->string('access_token');
+            $table->text('access_token');
+            $table->text('refresh_token');
             $table->string('base_url');
+            $table->dateTime('expires_at');
             $table->timestamps();
         });
     }

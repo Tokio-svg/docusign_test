@@ -10,6 +10,10 @@ use App\Models\File;
 use App\Models\Envelope;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use DocuSign\eSign\Configuration;
+use DocuSign\eSign\Api\EnvelopesApi;
+use DocuSign\eSign\Client\ApiClient;
+use Exception;
 
 class DocusignController extends Controller
 {
@@ -207,9 +211,17 @@ class DocusignController extends Controller
 
             // パラメータ取得
             $signer_email = $request->signer_email;
-            $file_item = File::first();
-            $file = Storage::get($file_item->file_path);
-            $file_ext = pathinfo($file_item->file_path, PATHINFO_EXTENSION);
+            // $file_item = File::first();
+            // $file = Storage::get($file_item->file_path);
+            // $file_ext = pathinfo($file_item->file_path, PATHINFO_EXTENSION);
+            $docsFilePath = public_path('doc/demo_pdf_new.pdf');
+            $arrContextOptions=array(
+                "ssl"=>array(
+                    "verify_peer"=>false,
+                    "verify_peer_name"=>false,
+                ),
+            );
+            $file = file_get_contents($docsFilePath, false, stream_context_create($arrContextOptions));
             $file_base64 = base64_encode($file);
             $docusign_item = Docusign::first();
             $access_token = $docusign_item->access_token;
@@ -223,8 +235,8 @@ class DocusignController extends Controller
                 'documents' => [
                     [
                         'documentBase64' => $file_base64,
-                        'name' => 'test file',
-                        'fileExtension' => $file_ext,
+                        'name' => 'Example Document File',
+                        'fileExtension' => 'pdf',
                         'documentId' => '1'
                     ]
                 ],
@@ -242,7 +254,23 @@ class DocusignController extends Controller
                             'email' => $signer_email,
                             'name' => 'Signer Name',
                             'recipientId' => '1',
-                            'routingOrder' => '1'
+                            'routingOrder' => '1',
+                            'tabs' => [ // サインする場所を指定
+                                'signHereTabs' => [
+                                    [
+                                        'anchor_string' => 'Sign Here:',
+                                        'anchor_units' => 'pixels',
+                                        'anchor_y_offset' => '10',
+                                        'anchor_x_offset' => '20'
+                                    ],
+                                    [
+                                        'anchor_string' => 'Sign Here:',
+                                        'anchor_units' => 'pixels',
+                                        'anchor_y_offset' => '40',
+                                        'anchor_x_offset' => '40'
+                                    ]
+                                ]
+                            ]
                         ]
                     ]
                 ],
@@ -324,6 +352,26 @@ class DocusignController extends Controller
         return view('envelope', [
             'params' => $params
         ]);
+    }
+
+    // 封筒のドキュメントダウンロード
+    public function downloadDocuments($envelopeId) {
+        $docusign_item = Docusign::first();
+        $access_token = $docusign_item->access_token;
+        $account_id = $docusign_item->account_id;
+        $base_url = $docusign_item->base_url;
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer ' . $access_token
+        ])->get($base_url . '/restapi/v2.1/accounts/' . $account_id . '/envelopes/' . $envelopeId . '/documents/archive');
+
+        $mime_type = 'application/zip';
+
+        $headers = [
+            'Content-Type' => $mime_type,
+            'Content-Disposition' => 'attachment; filename="'. $envelopeId . '.zip' . '"'
+        ];
+
+        return response()->make($response, 200, $headers);
     }
 
 }

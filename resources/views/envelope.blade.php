@@ -23,6 +23,10 @@
       </ol>
     </div>
 
+    <div>
+      <a class="integration__button" href="/downloadDocuments/{{$params['envelopeId']}}">ダウンロード</a>
+    </div>
+
     <a class="link" href="/envelopes">一覧に戻る</a>
     <a class="link" href="/">index</a>
   </article>

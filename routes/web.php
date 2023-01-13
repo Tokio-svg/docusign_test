@@ -21,6 +21,8 @@ Route::post('/requestSign', [DocusignController::class, 'sendRequestSign']);
 Route::get('/envelopes', [DocusignController::class, 'envelopeList']);
 // 個別の封筒情報
 Route::get('/envelope/{id}', [DocusignController::class, 'envelope']);
+// 封筒のドキュメントダウンロード
+Route::get('/downloadDocuments/{envelopeId}', [DocusignController::class, 'downloadDocuments']);
 
 // ログ取得
 Route::get('/getLogs', [TestController::class, 'getLogs']);

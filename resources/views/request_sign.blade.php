@@ -14,11 +14,11 @@
 
     <form action="/requestSign" method="post">
       @csrf
-      <div>
+      <div class="request__form--container">
         <label for="signer_email">署名者メールアドレス</label>
         <input class="form__input" type="email" name="signer_email" required>
       </div>
-      <div>
+      <div class="request__form--container">
         <label for="signer_email">CCメールアドレス</label>
         <input class="form__input" type="email" name="cc_email" required>
       </div>

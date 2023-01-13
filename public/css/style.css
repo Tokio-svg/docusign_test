@@ -63,10 +63,22 @@ h2 {
 .link {
   color: rgb(58, 58, 188);
   text-decoration: underline;
+  margin: 5px 0;
+  display: inline-block;
 }
 
 .dowload-log__button--container {
   margin-top: 30px;
+}
+
+/* 署名リクエスト画面 */
+.request__form--container {
+  margin: 5px 0;
+}
+
+.request__form--container label {
+  width: 164px;
+  display: inline-block;
 }
 
 /* 連携完了画面 */

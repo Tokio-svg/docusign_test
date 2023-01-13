@@ -18,6 +18,10 @@
         <label for="signer_email">署名者メールアドレス</label>
         <input class="form__input" type="email" name="signer_email" required>
       </div>
+      <div>
+        <label for="signer_email">CCメールアドレス</label>
+        <input class="form__input" type="email" name="cc_email" required>
+      </div>
       <button class="form__button" type="submit">送信</button>
     </form>
 

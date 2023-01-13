@@ -36,21 +36,6 @@
         </form>
       </div>
 
-      <div class="file__container">
-        <h2>File Info</h2>
-        @if(!$file_path)
-          <form action="/upload" method="post" enctype="multipart/form-data">
-            @csrf
-            <div>
-              <input type="file" name="file" id="file">
-            </div>
-            <button class="form__button" type="submit">Upload</button>
-          </form>
-        @else
-          <div>file_path: {{$file_path}}</div>
-        @endif
-      </div>
-
       <div class="menu__container">
         <h2>API Menu</h2>
         <ol>

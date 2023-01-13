@@ -6,14 +6,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use App\Models\Docusign;
-use App\Models\File;
 use App\Models\Envelope;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
-use DocuSign\eSign\Configuration;
-use DocuSign\eSign\Api\EnvelopesApi;
-use DocuSign\eSign\Client\ApiClient;
-use Exception;
+// use DocuSign\eSign\Configuration;
+// use DocuSign\eSign\Api\EnvelopesApi;
+// use DocuSign\eSign\Client\ApiClient;
 
 class DocusignController extends Controller
 {
@@ -35,11 +32,6 @@ class DocusignController extends Controller
             $params['account_name'] = $docusign->account_name;
             $params['base_url'] = $docusign->base_url;
             $params['access_token'] = $docusign->access_token;
-        }
-
-        $file = File::first();
-        if ($file) {
-            $params['file_path'] = $file->file_path;
         }
 
         return view('index', $params);
@@ -162,37 +154,6 @@ class DocusignController extends Controller
     }
 
     // -----------------------------------------------
-    // ファイルアップロード処理
-    // -----------------------------------------------
-    /**
-     *
-     * @param  \Illuminate\Http\Request  $request
-     *
-     */
-    public function upload(Request $request) {
-        try {
-            DB::beginTransaction();
-            $path = $request->file('file')->store('public');
-            $file = File::first();
-            if ($file) {
-                $file->update([
-                    'file_path' => $path
-                ]);
-            } else {
-                File::create([
-                    'file_path' => $path
-                ]);
-            }
-            DB::commit();
-        } catch(\Throwable $e) {
-            DB::rollBack();
-            Log::error($e);
-            throw $e;
-        }
-        return redirect('/');
-    }
-
-    // -----------------------------------------------
     // 電子署名依頼処理
     // -----------------------------------------------
     public function requestSignPage() {
@@ -211,10 +172,8 @@ class DocusignController extends Controller
 
             // パラメータ取得
             $signer_email = $request->signer_email;
-            // $file_item = File::first();
-            // $file = Storage::get($file_item->file_path);
-            // $file_ext = pathinfo($file_item->file_path, PATHINFO_EXTENSION);
-            $docsFilePath = public_path('doc/demo_pdf_new.pdf');
+            $cc_email = $request->cc_email;
+            $docsFilePath = public_path('doc/fudousann_chintaikeiyaku_sample.pdf');
             $arrContextOptions=array(
                 "ssl"=>array(
                     "verify_peer"=>false,
@@ -243,8 +202,8 @@ class DocusignController extends Controller
                 'recipients' => [
                     'carbonCopies' => [
                         [
-                            'email' => 're_zell@yahoo.co.jp',
-                            'name' => 'CC Name',
+                            'email' => $cc_email,
+                            'name' => '{CC送信先の名前}',
                             'recipientId' => '2',
                             'routingOrder' => '2'
                         ]
@@ -252,23 +211,23 @@ class DocusignController extends Controller
                     'signers' => [
                         [
                             'email' => $signer_email,
-                            'name' => 'Signer Name',
+                            'name' => '{署名者の名前}',
                             'recipientId' => '1',
                             'routingOrder' => '1',
                             'tabs' => [ // サインする場所を指定
                                 'signHereTabs' => [
                                     [
-                                        'anchor_string' => 'Sign Here:',
+                                        'anchor_string' => '（名称）',
                                         'anchor_units' => 'pixels',
                                         'anchor_y_offset' => '10',
                                         'anchor_x_offset' => '20'
                                     ],
-                                    [
-                                        'anchor_string' => 'Sign Here:',
-                                        'anchor_units' => 'pixels',
-                                        'anchor_y_offset' => '40',
-                                        'anchor_x_offset' => '40'
-                                    ]
+                                    // [
+                                    //     'anchor_string' => '（名称）',
+                                    //     'anchor_units' => 'pixels',
+                                    //     'anchor_y_offset' => '40',
+                                    //     'anchor_x_offset' => '40'
+                                    // ]
                                 ]
                             ]
                         ]

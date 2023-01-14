@@ -60,7 +60,7 @@ class DocusignController extends Controller
             $header_authorization = 'Basic ' . $base_64_string;
             $response = Http::withHeaders([
                 'Authorization' => $header_authorization
-            ])->post('https://account-d.docusign.com/oauth/token', [
+            ])->post(config('app.docusign_oauth_url') . '/token', [
                 'grant_type' => 'authorization_code',
                 'code' => $code,
             ]);
@@ -70,10 +70,10 @@ class DocusignController extends Controller
             $expires_in = $response['expires_in'];
             $expires_at = Carbon::now()->addSeconds($expires_in);
 
-            // ベースURIを取得
+            // account_id, account_name, base_urlを取得
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $access_token
-            ])->get('https://account-d.docusign.com/oauth/userinfo');
+            ])->get(config('app.docusign_oauth_url') . '/userinfo');
             Log::debug($response);
             $account_id = $response['accounts'][0]['account_id'];
             $account_name = $response['accounts'][0]['account_name'];

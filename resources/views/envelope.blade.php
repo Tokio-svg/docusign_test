@@ -27,8 +27,10 @@
       <a class="integration__button" href="/downloadDocuments/{{$params['envelopeId']}}">ダウンロード</a>
     </div>
 
-    <a class="link" href="/envelopes">一覧に戻る</a>
-    <a class="link" href="/">index</a>
+    <ol>
+      <li><a class="link" href="/envelopes">封筒一覧に戻る</a></li>
+      <li><a class="link" href="/">index</a></li>
+    </ol>
   </article>
 </body>
 </html>

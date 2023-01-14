@@ -16,10 +16,11 @@
       @php
         $redirect_url = config('app.url');
         $integration_key = config('app.docusign_integration_key');
+        $oauth_url = config('app.docusign_oauth_url');
       @endphp
       <a
         class="integration__button"
-        href="https://account-d.docusign.com/oauth/auth?response_type=code&scope=signature&client_id={{$integration_key}}&state=a39fh23hnf23&redirect_uri={{$redirect_url}}/docusign">
+        href="{{$oauth_url}}/auth?response_type=code&scope=signature&client_id={{$integration_key}}&state=a39fh23hnf23&redirect_uri={{$redirect_url}}/docusign">
         連携する
       </a>
     @else

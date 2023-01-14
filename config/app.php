@@ -215,4 +215,5 @@ return [
     // DocuSignで使用する環境変数
     'docusign_integration_key' => env('DOCUSIGN_INTEGRATION_KEY'),
     'docusign_secret_key' => env('DOCUSIGN_SECRET_KEY'),
+    'docusign_oauth_url' => env('DOCUSIGN_OAUTH_URL')
 ];

@@ -71,6 +71,18 @@ h2 {
   margin-top: 30px;
 }
 
+.refresh_token_button {
+  display: block;
+  width: 200px;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  margin-top: 20px;
+  background-color: white;
+  border: 1px solid rgb(58, 58, 188);
+  color: rgb(58, 58, 188);
+}
+
 /* 署名リクエスト画面 */
 .request__form--container {
   margin: 5px 0;
@@ -110,6 +122,8 @@ h2 {
   height: 40px;
   background-color: rgb(222, 255, 244);
   border-radius: 5px;
+  display: flex;
+  align-items: center;
 }
 
 .envelope-list__item:hover {
@@ -127,6 +141,18 @@ h2 {
 .envelope-list__item a span {
   padding-right: 10px;
   font-weight: bold;
+}
+
+.envelope-list__delete {
+  width: 21px;
+  height: 21px;
+  line-height: 21px;
+  text-align: center;
+  background-color: black;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 3px;
 }
 
 /* 封筒情報画面 */

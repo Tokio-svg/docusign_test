@@ -9,9 +9,7 @@ use App\Models\Docusign;
 use App\Models\Envelope;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
-// use DocuSign\eSign\Configuration;
-// use DocuSign\eSign\Api\EnvelopesApi;
-// use DocuSign\eSign\Client\ApiClient;
+use Artisan;
 
 class DocusignController extends Controller
 {
@@ -115,6 +113,14 @@ class DocusignController extends Controller
                 'base_url' => $base_url
             ]
         ]);
+    }
+
+    // -----------------------------------------------
+    // トークン更新処理
+    // -----------------------------------------------
+    public function refreshToken() {
+        Artisan::call('refreshToken');
+        return redirect('/');
     }
 
     // -----------------------------------------------
@@ -224,20 +230,29 @@ class DocusignController extends Controller
                             'name' => '{署名者の名前}',
                             'recipientId' => '1',
                             'routingOrder' => '1',
-                            'tabs' => [ // サインする場所を指定
+                            'tabs' => [ // サインする種類と場所を指定
                                 'signHereTabs' => [
                                     [
-                                        'anchor_string' => '（名称）',
-                                        'anchor_units' => 'pixels',
-                                        'anchor_y_offset' => '10',
-                                        'anchor_x_offset' => '20'
-                                    ],
-                                    // [
-                                    //     'anchor_string' => '（名称）',
-                                    //     'anchor_units' => 'pixels',
-                                    //     'anchor_y_offset' => '40',
-                                    //     'anchor_x_offset' => '40'
-                                    // ]
+                                        'anchorString' => '（名称）',
+                                        'anchorUnits' => 'pixels',
+                                        'anchorXOffset' => '140',
+                                        'anchorYOffset' => '30'
+                                    ]
+                                ],
+                                'textTabs' => [
+                                    [
+                                        'anchorString' => '（名称）',
+                                        'anchorUnits' => 'pixels',
+                                        'anchorXOffset' => '30',
+                                        'anchorYOffset' => '0',
+                                        'bold' => 'true',
+                                        'font' => 'helvetica',
+                                        'fontSize' => 'size11',
+                                        'locked' => 'false',
+                                        'tabId' => 'legal_name',
+                                        'tabLabel' => 'Legal name',
+                                        'value' => '{署名者の名前}'
+                                    ]
                                 ]
                             ]
                         ]
@@ -280,6 +295,12 @@ class DocusignController extends Controller
         return view('envelopes', [
             'envelopes' => $envelopes
         ]);
+    }
+
+    // 封筒削除
+    public function deleteEnvelope(Request $request) {
+        Envelope::find($request->delete_id)->delete();
+        return redirect('/envelopes');
     }
 
     // 個別の封筒情報(APIから取得)

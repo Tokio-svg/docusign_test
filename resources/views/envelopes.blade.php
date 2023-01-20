@@ -17,6 +17,11 @@
         <ol>
             @foreach($envelopes as $envelope)
               <li class="envelope-list__item">
+                <form action="/deleteEnvelope" method="post">
+                  @csrf
+                  <input type="hidden" name="delete_id" value="{{ $envelope['id'] }}">
+                  <button type="submit" class="envelope-list__delete">×</button>
+                </form>
                 <a href="/envelope/{{$envelope['id']}}">
                   <span>envelope_id:</span>{{$envelope['envelope_id']}}
                 </a>

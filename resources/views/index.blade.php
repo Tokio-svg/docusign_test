@@ -36,6 +36,7 @@
           @csrf
           <button class="integration__button" type="submit">連携解除</button>
         </form>
+        <a href="/refreshToken" class="refresh_token_button">トークン更新</a>
       </div>
 
       <div class="menu__container">
